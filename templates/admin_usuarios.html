@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <h2 class="logo">InfraVial</h2>
+        <ul class="menu">
+            <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="/formulario"><i class="fas fa-plus-circle"></i> Nueva Ficha</a></li>
+            <li><a href="/registros"><i class="fas fa-list"></i> Ver Registros</a></li>
+            <li><a href="/admin/usuarios"><i class="fas fa-users"></i> Usuarios</a></li>
+            <li><a href="/admin/actividad"><i class="fas fa-history"></i> Actividad</a></li>
+            <li><a href="/exportar"><i class="fas fa-download"></i> Exportar</a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <h3><i class="fas fa-users"></i> Gestión de Usuarios</h3>
+        </div>
+
+        <div class="table-card">
+            <div class="mb-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
+                    <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Fecha Creación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in usuarios %}
+                        <tr>
+                            <td>{{ u.id }}</td>
+                            <td>{{ u.username }}</td>
+                            <td>
+                                {% if u.role == 'admin' %}
+                                    <span class="badge-admin">Administrador</span>
+                                {% else %}
+                                    <span class="badge-user">Usuario</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ u.created_at[:19] if u.created_at else '-' }}</td>
+                            <td>
+                                {% if u.id != session.user_id %}
+                                <a href="/admin/eliminar_usuario/{{ u.id }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este usuario?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% else %}
+                                    <span class="text-muted">Actual</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal Crear Usuario -->
+<div class="modal fade" id="crearUsuarioModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Nuevo Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="/admin/crear_usuario">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rol</label>
+                        <select name="role" class="form-select">
+                            <option value="user">Usuario Normal</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

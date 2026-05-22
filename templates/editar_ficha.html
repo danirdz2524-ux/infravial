@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Ficha #{{ ficha.ficha_numero }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <h2 class="logo">InfraVial</h2>
+        <ul class="menu">
+            <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="/formulario"><i class="fas fa-plus-circle"></i> <span>Nueva Ficha</span></a></li>
+            <li><a href="/registros"><i class="fas fa-list"></i> <span>Ver Registros</span></a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <h3><i class="fas fa-edit"></i> FICHA TÉCNICA - ALCANTARILLA</h3>
+            <div class="ficha-numero">#{{ ficha.ficha_numero }}</div>
+        </div>
+
+        <div class="form-card">
+            <form method="POST" enctype="multipart/form-data">
+                <!-- misma estructura que formulario, pero con value="{{ ficha.campo }}" -->
+                <div class="form-section">
+                    <h5><i class="fas fa-map-marker-alt"></i> Ubicación General</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Parroquia</label>
+                            <input type="text" name="parroquia" class="form-control" value="{{ ficha.parroquia or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Cantón</label>
+                            <input type="text" name="canton" class="form-control" value="{{ ficha.canton or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Provincia</label>
+                            <input type="text" name="provincia" class="form-control" value="{{ ficha.provincia or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" name="fecha" class="form-control" value="{{ ficha.fecha or '' }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Tramo vial</label>
+                            <input type="text" name="tramo_vial" class="form-control" value="{{ ficha.tramo_vial or '' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muros de Ala -->
+                <div class="form-section">
+                    <h5><i class="fas fa-building"></i> Muros de Ala</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label>Longitud</label>
+                            <input type="text" name="muro_ala_longitud" class="form-control" value="{{ ficha.muro_ala_longitud or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Espesor</label>
+                            <input type="text" name="muro_ala_espesor" class="form-control" value="{{ ficha.muro_ala_espesor or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Solera</label>
+                            <div class="form-check form-switch mt-2">
+                                <input class="form-check-input" type="checkbox" name="muro_ala_solera" id="soleraSwitch" {% if ficha.muro_ala_solera %}checked{% endif %}>
+                                <label class="form-check-label" for="soleraSwitch">Sí</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Material</label>
+                            <select name="muro_ala_material" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.muro_ala_material == 'H.Simple' %}selected{% endif %}>H.Simple</option>
+                                <option {% if ficha.muro_ala_material == 'H.Ciclopeo' %}selected{% endif %}>H.Ciclopeo</option>
+                                <option {% if ficha.muro_ala_material == 'H.Armado' %}selected{% endif %}>H.Armado</option>
+                                <option {% if ficha.muro_ala_material == 'Muro gavión' %}selected{% endif %}>Muro gavión</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Estado</label>
+                            <select name="muro_ala_estado" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.muro_ala_estado == 'Bueno' %}selected{% endif %}>Bueno</option>
+                                <option {% if ficha.muro_ala_estado == 'Regular' %}selected{% endif %}>Regular</option>
+                                <option {% if ficha.muro_ala_estado == 'Malo' %}selected{% endif %}>Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tubería -->
+                <div class="form-section">
+                    <h5><i class="fas fa-water"></i> Tubería</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label>Material</label>
+                            <select name="tuberia_material" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.tuberia_material == 'Cemento' %}selected{% endif %}>Cemento</option>
+                                <option {% if ficha.tuberia_material == 'PVC' %}selected{% endif %}>PVC</option>
+                                <option {% if ficha.tuberia_material == 'M.Corrugado' %}selected{% endif %}>M.Corrugado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Longitud</label>
+                            <input type="text" name="tuberia_longitud" class="form-control" value="{{ ficha.tuberia_longitud or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Diámetro</label>
+                            <input type="text" name="tuberia_diametro" class="form-control" value="{{ ficha.tuberia_diametro or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Estado</label>
+                            <select name="tuberia_estado" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.tuberia_estado == 'Bueno' %}selected{% endif %}>Bueno</option>
+                                <option {% if ficha.tuberia_estado == 'Regular' %}selected{% endif %}>Regular</option>
+                                <option {% if ficha.tuberia_estado == 'Malo' %}selected{% endif %}>Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Muro Cabezal -->
+                <div class="form-section">
+                    <h5><i class="fas fa-archway"></i> Muro Cabezal</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label>Longitud</label>
+                            <input type="text" name="muro_cabezal_longitud" class="form-control" value="{{ ficha.muro_cabezal_longitud or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Espesor</label>
+                            <input type="text" name="muro_cabezal_espesor" class="form-control" value="{{ ficha.muro_cabezal_espesor or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Estado</label>
+                            <select name="muro_cabezal_estado" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.muro_cabezal_estado == 'Bueno' %}selected{% endif %}>Bueno</option>
+                                <option {% if ficha.muro_cabezal_estado == 'Regular' %}selected{% endif %}>Regular</option>
+                                <option {% if ficha.muro_cabezal_estado == 'Malo' %}selected{% endif %}>Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pozo -->
+                <div class="form-section">
+                    <h5><i class="fas fa-circle"></i> Pozo de Recolección</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="pozo_recoleccion" id="pozoSwitch" {% if ficha.pozo_recoleccion %}checked{% endif %}>
+                                <label class="form-check-label" for="pozoSwitch">¿Existe pozo?</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Ancho</label>
+                            <input type="text" name="pozo_ancho" class="form-control" value="{{ ficha.pozo_ancho or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Largo</label>
+                            <input type="text" name="pozo_largo" class="form-control" value="{{ ficha.pozo_largo or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Estado</label>
+                            <select name="pozo_estado" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option {% if ficha.pozo_estado == 'Bueno' %}selected{% endif %}>Bueno</option>
+                                <option {% if ficha.pozo_estado == 'Regular' %}selected{% endif %}>Regular</option>
+                                <option {% if ficha.pozo_estado == 'Malo' %}selected{% endif %}>Malo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coordenadas -->
+                <div class="form-section">
+                    <h5><i class="fas fa-globe"></i> Coordenadas UTM</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label>ESTE</label>
+                            <input type="text" name="utm_este" class="form-control" value="{{ ficha.utm_este or '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label>NORTE</label>
+                            <input type="text" name="utm_norte" class="form-control" value="{{ ficha.utm_norte or '' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Observaciones -->
+                <div class="form-section">
+                    <h5><i class="fas fa-comment-dots"></i> Observaciones</h5>
+                    <textarea name="observaciones" class="form-control" rows="4">{{ ficha.observaciones or '' }}</textarea>
+                </div>
+
+                <!-- Fotografía -->
+                <div class="form-section">
+                    <h5><i class="fas fa-camera"></i> Fotografía</h5>
+                    {% if ficha.imagen %}
+                        <img src="{{ url_for('static', filename='uploads/' + ficha.imagen) }}" alt="Imagen actual" class="img-thumbnail mb-2" style="max-height: 150px;">
+                        <br>
+                    {% endif %}
+                    <input type="file" name="imagen" class="form-control" accept="image/*">
+                    <small class="text-muted">Dejar en blanco para mantener la imagen actual</small>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <a href="/registros" class="btn btn-secondary px-5">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-5">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

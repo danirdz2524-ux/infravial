@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Actividad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <h2 class="logo">InfraVial</h2>
+        <ul class="menu">
+            <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="/formulario"><i class="fas fa-plus-circle"></i> Nueva Ficha</a></li>
+            <li><a href="/registros"><i class="fas fa-list"></i> Ver Registros</a></li>
+            <li><a href="/admin/usuarios"><i class="fas fa-users"></i> Usuarios</a></li>
+            <li><a href="/admin/actividad"><i class="fas fa-history"></i> Actividad</a></li>
+            <li><a href="/exportar"><i class="fas fa-download"></i> Exportar</a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <h3><i class="fas fa-history"></i> Registro de Actividad</h3>
+            <p class="text-muted mb-0">Historial de acciones de todos los usuarios</p>
+        </div>
+
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Detalles</th>
+                            <th>IP</th>
+                            <th>Fecha/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in actividad %}
+                        <tr>
+                            <td>{{ a.id }}</td>
+                            <td>{{ a.username }}</td>
+                            <td>
+                                {% if a.accion == 'login' %}
+                                    <span class="badge bg-success">Login</span>
+                                {% elif a.accion == 'logout' %}
+                                    <span class="badge bg-secondary">Logout</span>
+                                {% elif a.accion == 'crear_ficha' %}
+                                    <span class="badge bg-primary">Crear Ficha</span>
+                                {% elif a.accion == 'editar_ficha' %}
+                                    <span class="badge bg-warning">Editar Ficha</span>
+                                {% elif a.accion == 'eliminar_ficha' %}
+                                    <span class="badge bg-danger">Eliminar Ficha</span>
+                                {% elif a.accion == 'crear_usuario' %}
+                                    <span class="badge bg-info">Crear Usuario</span>
+                                {% elif a.accion == 'eliminar_usuario' %}
+                                    <span class="badge bg-dark">Eliminar Usuario</span>
+                                {% else %}
+                                    {{ a.accion }}
+                                {% endif %}
+                            </td>
+                            <td>{{ a.detalles or '-' }}</td>
+                            <td>{{ a.ip_address or '-' }}</td>
+                            <td>{{ a.created_at[:19] if a.created_at else '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

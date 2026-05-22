@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva Ficha Técnica - InfraVial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Estilos específicos para el formulario compacto */
+        .form-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 28px 32px;
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+        .form-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+        .ficha-badge {
+            background: #2c7da0;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .form-section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c7da0;
+            border-left: 4px solid #2c7da0;
+            padding-left: 12px;
+            margin-bottom: 16px;
+        }
+        .subsection {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .subsection-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 4px;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.1);
+        }
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .radio-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            padding: 5px 16px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .radio-card input {
+            display: none;
+        }
+        .radio-card:has(input:checked) {
+            background: #2c7da0;
+            border-color: #2c7da0;
+            color: white;
+        }
+        .estado-buttons {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .estado-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .estado-option input {
+            display: none;
+        }
+        .estado-option i {
+            font-size: 0.8rem;
+        }
+        .estado-option.bueno i { color: #10b981; }
+        .estado-option.regular i { color: #f59e0b; }
+        .estado-option.malo i { color: #ef4444; }
+        .estado-option:has(input:checked) {
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 30px;
+        }
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .toggle-switch input {
+            display: none;
+        }
+        .toggle-label {
+            width: 44px;
+            height: 22px;
+            background: #cbd5e1;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .toggle-label::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            transition: 0.2s;
+        }
+        .toggle-switch input:checked + .toggle-label {
+            background: #2c7da0;
+        }
+        .toggle-switch input:checked + .toggle-label::after {
+            left: 23px;
+        }
+        .dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .dropzone:hover {
+            border-color: #2c7da0;
+            background: #f1f5f9;
+        }
+        .preview-container {
+            position: relative;
+            text-align: center;
+            margin-top: 12px;
+        }
+        .preview-container img {
+            max-width: 150px;
+            max-height: 120px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-save, .btn-cancel {
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-save {
+            background: #2c7da0;
+            color: white;
+        }
+        .btn-save:hover {
+            background: #1f5e7a;
+            transform: translateY(-1px);
+        }
+        .btn-cancel {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .btn-cancel:hover {
+            background: #cbd5e1;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 16px;
+            }
+            .radio-group, .estado-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <h2 class="logo">InfraVial</h2>
+        <ul class="menu">
+            <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="/formulario"><i class="fas fa-plus-circle"></i> <span>Nueva Ficha</span></a></li>
+            <li><a href="/registros"><i class="fas fa-list"></i> <span>Ver Registros</span></a></li>
+            <li><a href="/exportar"><i class="fas fa-download"></i> <span>Exportar</span></a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="form-container">
+            <div class="form-header">
+                <h1 class="form-title">FICHA TÉCNICA - ALCANTARILLA</h1>
+                <div class="ficha-badge">N# Nueva</div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" id="fichaForm">
+                <!-- ========= UBICACIÓN GENERAL ========= -->
+                <div class="form-section">
+                    <div class="section-title">UBICACIÓN GENERAL</div>
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label class="form-label">Parroquia</label>
+                            <input type="text" name="parroquia" class="form-control" placeholder="Ej: Puerto Limón">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Cantón</label>
+                            <input type="text" name="canton" class="form-control" placeholder="Ej: Santo Domingo">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Provincia</label>
+                            <input type="text" name="provincia" class="form-control" placeholder="Ej: Sto. Domingo Tsáchilas">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" name="fecha" class="form-control">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Tramo vial</label>
+                            <input type="text" name="tramo_vial" class="form-control" placeholder="Ej: Vía Quevedo - Puerto Limón">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= INFRAESTRUCTURA EXISTENTE ========= -->
+                <div class="form-section">
+                    <div class="section-title">INFRAESTRUCTURA EXISTENTE</div>
+
+                    <!-- MUROS DE ALA -->
+                    <div class="subsection">
+                        <div class="subsection-title"><i class="fas fa-building"></i> MUROS DE ALA</div>
+                        <div class="row g-2">
+                            <div class="col-md-12">
+                                <label class="form-label">Material</label>
+                                <div class="radio-group">
+                                    <label class="radio-card"><input type="radio" name="muro_ala_material" value="H.Simple"> H.Simple</label>
+                                    <label class="radio-card"><input type="radio" name="muro_ala_material" value="H.Ciclopeo"> H.Ciclopeo</label>
+                                    <label class="radio-card"><input type="radio" name="muro_ala_material" value="H.Armado"> H.Armado</label>
+                                    <label class="radio-card"><input type="radio" name="muro_ala_material" value="Muro gavión"> Muro gavión</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Longitud (m)</label>
+                                <input type="text" name="muro_ala_longitud" class="form-control" placeholder="Ej: 5.50">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Espesor (m)</label>
+                                <input type="text" name="muro_ala_espesor" class="form-control" placeholder="Ej: 0.30">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                <div class="estado-buttons">
+                                    <label class="estado-option bueno"><input type="radio" name="muro_ala_estado" value="Bueno"> <i class="fas fa-circle"></i> Bueno</label>
+                                    <label class="estado-option regular"><input type="radio" name="muro_ala_estado" value="Regular"> <i class="fas fa-circle"></i> Regular</label>
+                                    <label class="estado-option malo"><input type="radio" name="muro_ala_estado" value="Malo"> <i class="fas fa-circle"></i> Malo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TUBERÍA -->
+                    <div class="subsection">
+                        <div class="subsection-title"><i class="fas fa-water"></i> TUBERÍA</div>
+                        <div class="row g-2">
+                            <div class="col-md-12">
+                                <label class="form-label">Material</label>
+                                <div class="radio-group">
+                                    <label class="radio-card"><input type="radio" name="tuberia_material" value="Cemento"> Cemento</label>
+                                    <label class="radio-card"><input type="radio" name="tuberia_material" value="PVC"> PVC</label>
+                                    <label class="radio-card"><input type="radio" name="tuberia_material" value="M.Corrugado"> M.Corrugado</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Longitud (m)</label>
+                                <input type="text" name="tuberia_longitud" class="form-control" placeholder="Ej: 11">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Diámetro (m)</label>
+                                <input type="text" name="tuberia_diametro" class="form-control" placeholder="Ej: 1.40">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                <div class="estado-buttons">
+                                    <label class="estado-option bueno"><input type="radio" name="tuberia_estado" value="Bueno"> <i class="fas fa-circle"></i> Bueno</label>
+                                    <label class="estado-option regular"><input type="radio" name="tuberia_estado" value="Regular"> <i class="fas fa-circle"></i> Regular</label>
+                                    <label class="estado-option malo"><input type="radio" name="tuberia_estado" value="Malo"> <i class="fas fa-circle"></i> Malo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MURO CABEZAL -->
+                    <div class="subsection">
+                        <div class="subsection-title"><i class="fas fa-archway"></i> MURO CABEZAL</div>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label">Longitud (m)</label>
+                                <input type="text" name="muro_cabezal_longitud" class="form-control" placeholder="Ej: 4.50">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Espesor (m)</label>
+                                <input type="text" name="muro_cabezal_espesor" class="form-control" placeholder="Ej: 0.40">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                <div class="estado-buttons">
+                                    <label class="estado-option bueno"><input type="radio" name="muro_cabezal_estado" value="Bueno"> <i class="fas fa-circle"></i> Bueno</label>
+                                    <label class="estado-option regular"><input type="radio" name="muro_cabezal_estado" value="Regular"> <i class="fas fa-circle"></i> Regular</label>
+                                    <label class="estado-option malo"><input type="radio" name="muro_cabezal_estado" value="Malo"> <i class="fas fa-circle"></i> Malo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- POZO DE RECOLECCIÓN -->
+                    <div class="subsection">
+                        <div class="subsection-title"><i class="fas fa-circle"></i> POZO DE RECOLECCIÓN</div>
+                        <div class="row g-2">
+                            <div class="col-md-12">
+                                <div class="toggle-switch">
+                                    <input type="checkbox" name="pozo_recoleccion" id="pozoToggle">
+                                    <label for="pozoToggle" class="toggle-label"></label>
+                                    <span class="toggle-text">¿Existe pozo?</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ancho (m)</label>
+                                <input type="text" name="pozo_ancho" class="form-control" placeholder="Ej: 1.20">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Largo (m)</label>
+                                <input type="text" name="pozo_largo" class="form-control" placeholder="Ej: 1.60">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                <div class="estado-buttons">
+                                    <label class="estado-option bueno"><input type="radio" name="pozo_estado" value="Bueno"> <i class="fas fa-circle"></i> Bueno</label>
+                                    <label class="estado-option regular"><input type="radio" name="pozo_estado" value="Regular"> <i class="fas fa-circle"></i> Regular</label>
+                                    <label class="estado-option malo"><input type="radio" name="pozo_estado" value="Malo"> <i class="fas fa-circle"></i> Malo</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= COORDENADAS UTM ========= -->
+                <div class="form-section">
+                    <div class="section-title">COORDENADAS UTM</div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">ESTE (X)</label>
+                            <input type="text" name="utm_este" class="form-control" placeholder="Ej: 697499">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">NORTE (Y)</label>
+                            <input type="text" name="utm_norte" class="form-control" placeholder="Ej: 9966673">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= OBSERVACIONES ========= -->
+                <div class="form-section">
+                    <div class="section-title">OBSERVACIONES</div>
+                    <textarea name="observaciones" class="form-control" rows="3" placeholder="Describa el estado actual, daños, obstrucciones, vegetación..."></textarea>
+                </div>
+
+                <!-- ========= FOTOGRAFÍA ========= -->
+               <!-- ========= FOTOGRAFÍA (Múltiples imágenes) ========= -->
+<div class="form-section">
+    <div class="section-title">FOTOGRAFÍAS</div>
+    <div class="dropzone" id="dropzoneMulti">
+        <i class="fas fa-camera fa-2x"></i>
+        <p>Arrastra y suelta tus imágenes aquí</p>
+        <span>o</span>
+        <button type="button" class="btn-upload" id="btnUploadMulti">Subir Fotos</button>
+        <input type="file" name="imagenes" id="fileInputMulti" accept="image/*" multiple style="display: none;">
+    </div>
+    <div class="preview-gallery" id="previewGallery" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;"></div>
+</div>
+
+<script>
+// Múltiples imágenes
+const dropzoneMulti = document.getElementById('dropzoneMulti');
+const fileInputMulti = document.getElementById('fileInputMulti');
+const previewGallery = document.getElementById('previewGallery');
+
+if (dropzoneMulti) {
+    dropzoneMulti.addEventListener('click', () => fileInputMulti.click());
+    dropzoneMulti.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzoneMulti.style.borderColor = '#2c7da0';
+    });
+    dropzoneMulti.addEventListener('dragleave', () => {
+        dropzoneMulti.style.borderColor = '#cbd5e1';
+    });
+    dropzoneMulti.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzoneMulti.style.borderColor = '#cbd5e1';
+        const files = Array.from(e.dataTransfer.files);
+        handleMultipleFiles(files);
+    });
+}
+
+fileInputMulti.addEventListener('change', (e) => {
+    if (fileInputMulti.files.length > 0) {
+        handleMultipleFiles(Array.from(fileInputMulti.files));
+    }
+});
+
+function handleMultipleFiles(files) {
+    previewGallery.innerHTML = '';
+    previewGallery.style.display = 'flex';
+    dropzoneMulti.style.display = 'none';
+    
+    files.forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.width = '120px';
+            
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '100%';
+                img.style.height = '90px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '12px';
+                img.style.border = '1px solid #e2e8f0';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.style.position = 'absolute';
+            removeBtn.style.top = '-8px';
+            removeBtn.style.right = '-8px';
+            removeBtn.style.background = '#ef4444';
+            removeBtn.style.color = 'white';
+            removeBtn.style.border = 'none';
+            removeBtn.style.borderRadius = '50%';
+            removeBtn.style.width = '24px';
+            removeBtn.style.height = '24px';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = () => {
+                container.remove();
+                if (previewGallery.children.length === 0) {
+                    previewGallery.style.display = 'none';
+                    dropzoneMulti.style.display = 'block';
+                }
+            };
+            container.appendChild(removeBtn);
+            previewGallery.appendChild(container);
+        }
+    });
+}
+</script>
+
+                <!-- ========= BOTONES ========= -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="window.location.href='/registros'">CANCELAR</button>
+                    <button type="submit" class="btn-save">GUARDAR FICHA</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Navegación con Enter: al presionar Enter en un campo, pasa al siguiente
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('fichaForm');
+        const inputs = Array.from(form.querySelectorAll('input, select, textarea'));
+        
+        form.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const target = e.target;
+                const index = inputs.indexOf(target);
+                if (index !== -1 && index < inputs.length - 1) {
+                    e.preventDefault();
+                    const next = inputs[index + 1];
+                    next.focus();
+                    // Si es radio o checkbox, no seleccionar automáticamente, solo focus
+                    if (next.type === 'radio' || next.type === 'checkbox') {
+                        // Opcional: no hacer nada extra
+                    }
+                }
+            }
+        });
+
+        // Drag & drop fotografía
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const removeBtn = document.getElementById('removeImage');
+
+        if (dropzone) {
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#2c7da0';
+            });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.style.borderColor = '#cbd5e1';
+            });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#cbd5e1';
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    fileInput.files = e.dataTransfer.files;
+                    showPreview(file);
+                }
+            });
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            if (fileInput.files.length > 0) {
+                showPreview(fileInput.files[0]);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                dropzone.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                fileInput.value = '';
+                previewContainer.style.display = 'none';
+                dropzone.style.display = 'block';
+            });
+        }
+    });
+</script>
+</body>
+</html>

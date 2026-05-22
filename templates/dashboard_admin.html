@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin - InfraVial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <h2 class="logo">InfraVial</h2>
+        <ul class="menu">
+            <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li><a href="/formulario"><i class="fas fa-plus-circle"></i> <span>Nueva Ficha</span></a></li>
+            <li><a href="/registros"><i class="fas fa-list"></i> <span>Ver Registros</span></a></li>
+            <li><a href="/admin/usuarios"><i class="fas fa-users"></i> <span>Usuarios</span></a></li>
+            <li><a href="/admin/actividad"><i class="fas fa-history"></i> <span>Actividad</span></a></li>
+            <li><a href="/exportar"><i class="fas fa-download"></i> <span>Exportar</span></a></li>
+            <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <h3><i class="fas fa-chart-line"></i> Panel de Administración</h3>
+            <p class="text-muted mb-0">Bienvenido, {{ user }} (Administrador)</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5><i class="fas fa-file-alt"></i> Total Fichas</h5>
+                    <h2>{{ total_fichas }}</h2>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5><i class="fas fa-users"></i> Total Usuarios</h5>
+                    <h2>{{ total_usuarios }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <h5><i class="fas fa-clock"></i> Última Actividad</h5>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>Detalles</th>
+                            <th>Fecha/Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in auditoria %}
+                        <tr>
+                            <td>{{ a.username }}</td>
+                            <td>{{ a.accion }}</td>
+                            <td>{{ a.detalles or '-' }}</td>
+                            <td>{{ a.created_at[:19] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal de Manual de Usuario -->
+<div class="modal fade" id="manualModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-book"></i> Manual de Usuario - InfraVial</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+                <h6>📌 ¿Cómo crear una nueva ficha?</h6>
+                <ol>
+                    <li>Haz clic en <strong>"Nueva Ficha"</strong> en el menú lateral.</li>
+                    <li>Completa todos los campos del formulario.</li>
+                    <li>Puedes subir una foto arrastrándola o haciendo clic en "Subir Foto".</li>
+                    <li>Presiona <strong>Enter</strong> para moverte al siguiente campo rápidamente.</li>
+                    <li>Haz clic en <strong>"Guardar Ficha"</strong> para guardar.</li>
+                </ol>
+                
+                <h6>📋 ¿Cómo ver y gestionar registros?</h6>
+                <ol>
+                    <li>Ve a <strong>"Ver Registros"</strong> en el menú.</li>
+                    <li>Usa el buscador para filtrar por provincia, cantón o número de ficha.</li>
+                    <li>Usa los botones <span class="badge bg-warning">✏️ Editar</span> y <span class="badge bg-danger">🗑️ Eliminar</span>.</li>
+                </ol>
+                
+                <h6>📤 ¿Cómo exportar datos a CSV o Excel?</h6>
+                <ol>
+                    <li>En la página de Registros, haz clic en <strong>"Exportar Datos"</strong> (botón verde).</li>
+                    <li>Elige entre formato <strong>CSV</strong> (compatible con QGIS) o <strong>Excel</strong>.</li>
+                    <li>También puedes descargar una <strong>plantilla QGIS</strong> de ejemplo.</li>
+                </ol>
+                
+                <h6>🗺️ ¿Cómo importar a QGIS?</h6>
+                <ol>
+                    <li>Abre QGIS → Capa → Añadir capa → Añadir capa de texto delimitado.</li>
+                    <li>Selecciona el archivo CSV exportado.</li>
+                    <li>Separador: <strong>Coma (,)</strong>, Codificación: <strong>UTF-8</strong>.</li>
+                    <li>Para crear puntos: usa <strong>COORD_X_ESTE</strong> como X y <strong>COORD_Y_NORTE</strong> como Y.</li>
+                    <li>CRS recomendado: <strong>EPSG:32717</strong> (UTM zona 17S para Ecuador).</li>
+                </ol>
+                
+                <h6>👥 Gestión de usuarios (solo Admin)</h6>
+                <ol>
+                    <li>Ve a <strong>"Usuarios"</strong> en el menú.</li>
+                    <li>Puedes crear nuevos usuarios o eliminar existentes.</li>
+                    <li>La <strong>"Actividad"</strong> muestra todas las acciones realizadas.</li>
+                </ol>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb"></i> <strong>Consejo:</strong> Presiona <strong>Enter</strong> dentro de cualquier campo para avanzar rápidamente al siguiente.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <a href="/exportar_template_qgis" class="btn btn-success">📥 Descargar plantilla QGIS</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botón flotante de ayuda -->
+<a href="#" data-bs-toggle="modal" data-bs-target="#manualModal" 
+   style="position: fixed; bottom: 30px; right: 30px; background: #2c7da0; color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; text-decoration: none;">
+    <i class="fas fa-question fa-xl"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
