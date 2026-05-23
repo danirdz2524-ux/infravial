@@ -3,9 +3,8 @@ from werkzeug.utils import secure_filename
 from config import supabase, Config
 import os
 from datetime import datetime
-import pandas as pd
-from io import StringIO, BytesIO
 import csv
+from io import StringIO
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -299,7 +298,7 @@ def registros():
                          total=total)
 
 # =========================
-# EXPORTAR A CSV
+# EXPORTAR A CSV (SIN PANDAS - NATIVO PYTHON)
 # =========================
 
 @app.route('/exportar')
@@ -340,55 +339,52 @@ def exportar_csv():
         flash("No hay datos para exportar", "warning")
         return redirect(url_for('registros'))
     
-    export_data = []
-    for r in datos:
-        export_data.append({
-            'ID_FICHA': r.get('ficha_numero', ''),
-            'FECHA': r.get('fecha', ''),
-            'PROVINCIA': r.get('provincia', ''),
-            'CANTON': r.get('canton', ''),
-            'PARROQUIA': r.get('parroquia', ''),
-            'TRAMO_VIAL': r.get('tramo_vial', ''),
-            'COORD_X_ESTE': r.get('utm_este', ''),
-            'COORD_Y_NORTE': r.get('utm_norte', ''),
-            'OBSERVACIONES': r.get('observaciones', '').replace('\n', ' ').replace('\r', ' '),
-            'M_ALA_LONGITUD_m': r.get('muro_ala_longitud', ''),
-            'M_ALA_ESPESOR_m': r.get('muro_ala_espesor', ''),
-            'M_ALA_MATERIAL': r.get('muro_ala_material', ''),
-            'M_ALA_ESTADO': r.get('muro_ala_estado', ''),
-            'M_ALA_SOLERA': 'SI' if r.get('muro_ala_solera') else 'NO',
-            'TUB_MATERIAL': r.get('tuberia_material', ''),
-            'TUB_LONGITUD_m': r.get('tuberia_longitud', ''),
-            'TUB_DIAMETRO_m': r.get('tuberia_diametro', ''),
-            'TUB_ESTADO': r.get('tuberia_estado', ''),
-            'M_CABEZAL_LONGITUD_m': r.get('muro_cabezal_longitud', ''),
-            'M_CABEZAL_ESPESOR_m': r.get('muro_cabezal_espesor', ''),
-            'M_CABEZAL_ESTADO': r.get('muro_cabezal_estado', ''),
-            'POZO_EXISTE': 'SI' if r.get('pozo_recoleccion') else 'NO',
-            'POZO_ANCHO_m': r.get('pozo_ancho', ''),
-            'POZO_LARGO_m': r.get('pozo_largo', ''),
-            'POZO_ESTADO': r.get('pozo_estado', ''),
-            'FECHA_REGISTRO': r.get('created_at', '')[:19] if r.get('created_at') else '',
-        })
-    
-    df = pd.DataFrame(export_data)
+    # Crear CSV manualmente (sin pandas)
     output = StringIO()
+    writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
     
-    output.write("# ================================================================\n")
-    output.write("# ARCHIVO EXPORTADO DEL SISTEMA INFRAVIAL\n")
-    output.write("# FECHA: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + "\n")
-    output.write("# TOTAL REGISTROS: " + str(len(datos)) + "\n")
-    output.write("# ================================================================\n")
-    output.write("# INSTRUCCIONES PARA QGIS:\n")
-    output.write("# 1. Capa -> Añadir capa -> Añadir capa de texto delimitado\n")
-    output.write("# 2. Seleccionar este archivo\n")
-    output.write("# 3. Separador: Coma (,)\n")
-    output.write("# 4. Codificacion: UTF-8\n")
-    output.write("# 5. CRS: EPSG:32717 (UTM zona 17S para Ecuador)\n")
-    output.write("# ================================================================\n")
-    output.write("\n")
+    # Escribir encabezados
+    headers = [
+        'NRO_FICHA', 'FECHA', 'PROVINCIA', 'CANTON', 'PARROQUIA', 'TRAMO_VIAL',
+        'UTM_ESTE', 'UTM_NORTE', 'OBSERVACIONES', 'MURO_ALA_LONGITUD_m',
+        'MURO_ALA_ESPESOR_m', 'MURO_ALA_MATERIAL', 'MURO_ALA_ESTADO', 'MURO_ALA_SOLERA',
+        'TUBERIA_MATERIAL', 'TUBERIA_LONGITUD_m', 'TUBERIA_DIAMETRO_m', 'TUBERIA_ESTADO',
+        'MURO_CABEZAL_LONGITUD_m', 'MURO_CABEZAL_ESPESOR_m', 'MURO_CABEZAL_ESTADO',
+        'POZO_EXISTE', 'POZO_ANCHO_m', 'POZO_LARGO_m', 'POZO_ESTADO'
+    ]
+    writer.writerow(headers)
     
-    df.to_csv(output, index=False, encoding='utf-8-sig', sep=',', quoting=csv.QUOTE_ALL)
+    # Escribir datos
+    for r in datos:
+        row = [
+            r.get('ficha_numero', ''),
+            r.get('fecha', ''),
+            r.get('provincia', ''),
+            r.get('canton', ''),
+            r.get('parroquia', ''),
+            r.get('tramo_vial', ''),
+            r.get('utm_este', ''),
+            r.get('utm_norte', ''),
+            r.get('observaciones', '').replace('\n', ' ').replace('\r', ' '),
+            r.get('muro_ala_longitud', ''),
+            r.get('muro_ala_espesor', ''),
+            r.get('muro_ala_material', ''),
+            r.get('muro_ala_estado', ''),
+            'SI' if r.get('muro_ala_solera') else 'NO',
+            r.get('tuberia_material', ''),
+            r.get('tuberia_longitud', ''),
+            r.get('tuberia_diametro', ''),
+            r.get('tuberia_estado', ''),
+            r.get('muro_cabezal_longitud', ''),
+            r.get('muro_cabezal_espesor', ''),
+            r.get('muro_cabezal_estado', ''),
+            'SI' if r.get('pozo_recoleccion') else 'NO',
+            r.get('pozo_ancho', ''),
+            r.get('pozo_largo', ''),
+            r.get('pozo_estado', ''),
+        ]
+        writer.writerow(row)
+    
     csv_data = output.getvalue()
     output.close()
     
@@ -403,97 +399,10 @@ def exportar_csv():
     flash(f"✅ Se exportaron {len(datos)} registros a CSV", "success")
     return response
 
-# =========================
-# EXPORTAR A EXCEL
-# =========================
-
-@app.route('/exportar_excel')
-def exportar_excel():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    tipo = request.args.get('tipo', 'todas')
-    busqueda = request.args.get('busqueda', '')
-    
-    if tipo == 'mis_fichas':
-        registros = obtener_fichas_usuario(session['user_id'])
-    elif tipo == 'filtradas' and busqueda:
-        if session['role'] == 'admin':
-            registros = supabase.table("alcantarillas").select("*").or_(
-                f"ficha_numero::text.ilike.%{busqueda}%,provincia.ilike.%{busqueda}%,canton.ilike.%{busqueda}%,tramo_vial.ilike.%{busqueda}%"
-            ).order("ficha_numero", desc=True).execute()
-        else:
-            registros = supabase.table("alcantarillas").select("*").eq("user_id", session['user_id']).or_(
-                f"ficha_numero::text.ilike.%{busqueda}%,provincia.ilike.%{busqueda}%,canton.ilike.%{busqueda}%,tramo_vial.ilike.%{busqueda}%"
-            ).order("ficha_numero", desc=True).execute()
-    else:
-        if session['role'] == 'admin':
-            registros = obtener_todas_fichas()
-        else:
-            registros = obtener_fichas_usuario(session['user_id'])
-    
-    datos = registros.data
-    
-    if not datos:
-        flash("No hay datos para exportar", "warning")
-        return redirect(url_for('registros'))
-    
-    export_data = []
-    for r in datos:
-        export_data.append({
-            'ID Ficha': r.get('ficha_numero', ''),
-            'Fecha': r.get('fecha', ''),
-            'Provincia': r.get('provincia', ''),
-            'Cantón': r.get('canton', ''),
-            'Parroquia': r.get('parroquia', ''),
-            'Tramo Vial': r.get('tramo_vial', ''),
-            'UTM Este (X)': r.get('utm_este', ''),
-            'UTM Norte (Y)': r.get('utm_norte', ''),
-            'Observaciones': r.get('observaciones', '').replace('\n', ' '),
-            'Muro Ala Longitud (m)': r.get('muro_ala_longitud', ''),
-            'Muro Ala Espesor (m)': r.get('muro_ala_espesor', ''),
-            'Muro Ala Material': r.get('muro_ala_material', ''),
-            'Muro Ala Estado': r.get('muro_ala_estado', ''),
-            'Muro Ala Solera': 'Sí' if r.get('muro_ala_solera') else 'No',
-            'Tubería Material': r.get('tuberia_material', ''),
-            'Tubería Longitud (m)': r.get('tuberia_longitud', ''),
-            'Tubería Diámetro (m)': r.get('tuberia_diametro', ''),
-            'Tubería Estado': r.get('tuberia_estado', ''),
-            'Muro Cabezal Longitud (m)': r.get('muro_cabezal_longitud', ''),
-            'Muro Cabezal Espesor (m)': r.get('muro_cabezal_espesor', ''),
-            'Muro Cabezal Estado': r.get('muro_cabezal_estado', ''),
-            'Pozo Recolección': 'Sí' if r.get('pozo_recoleccion') else 'No',
-            'Pozo Ancho (m)': r.get('pozo_ancho', ''),
-            'Pozo Largo (m)': r.get('pozo_largo', ''),
-            'Pozo Estado': r.get('pozo_estado', ''),
-        })
-    
-    df = pd.DataFrame(export_data)
-    output = BytesIO()
-    
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, sheet_name='Alcantarillas', index=False)
-    
-    output.seek(0)
-    
-    filename = f"INFRAVIAL_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-    response = make_response(output.getvalue())
-    response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    response.headers['Content-Disposition'] = f'attachment; filename={filename}'
-    
-    registrar_actividad(session['user_id'], session['username'], "exportar_excel", 
-                        f"Exportó {len(datos)} registros a Excel")
-    
-    flash(f"✅ Se exportaron {len(datos)} registros a Excel", "success")
-    return response
-
-# =========================
-# EXPORTAR A QGIS WKT (GEOMETRÍA)
-# =========================
 
 @app.route('/exportar_qgis_wkt')
 def exportar_qgis_wkt():
-    """Exporta a CSV con geometría WKT para QGIS (puntos)"""
+    """Exporta a CSV con geometría WKT para QGIS (puntos) - SIN PANDAS"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -509,33 +418,32 @@ def exportar_qgis_wkt():
     
     datos = registros.data
     
-    export_data = []
+    output = StringIO()
+    writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
+    
+    # Encabezados
+    writer.writerow(['id', 'provincia', 'canton', 'parroquia', 'tramo_vial', 'WKT', 'observaciones'])
+    
+    # Datos
     for r in datos:
         wkt_geom = ""
         if r.get('utm_este') and r.get('utm_norte'):
             wkt_geom = f"POINT({r.get('utm_este')} {r.get('utm_norte')})"
         
-        export_data.append({
-            'id': r.get('ficha_numero', ''),
-            'provincia': r.get('provincia', ''),
-            'canton': r.get('canton', ''),
-            'parroquia': r.get('parroquia', ''),
-            'tramo_vial': r.get('tramo_vial', ''),
-            'WKT': wkt_geom,
-            'observaciones': r.get('observaciones', '').replace('\n', ' ')
-        })
+        writer.writerow([
+            r.get('ficha_numero', ''),
+            r.get('provincia', ''),
+            r.get('canton', ''),
+            r.get('parroquia', ''),
+            r.get('tramo_vial', ''),
+            wkt_geom,
+            r.get('observaciones', '').replace('\n', ' ')
+        ])
     
-    df = pd.DataFrame(export_data)
-    output = StringIO()
+    csv_data = output.getvalue()
+    output.close()
     
-    output.write("# ARCHIVO CON GEOMETRÍA WKT PARA QGIS\n")
-    output.write("# La columna WKT contiene los puntos geográficos\n")
-    output.write("# CRS recomendado: EPSG:32717 (UTM zona 17S)\n")
-    output.write("\n")
-    
-    df.to_csv(output, index=False, encoding='utf-8-sig', sep=',', quoting=csv.QUOTE_ALL)
-    
-    response = make_response(output.getvalue())
+    response = make_response(csv_data)
     response.headers['Content-Type'] = 'text/csv; charset=utf-8-sig'
     response.headers['Content-Disposition'] = 'attachment; filename=INFRAVIAL_QGIS_WKT.csv'
     
@@ -544,54 +452,26 @@ def exportar_qgis_wkt():
     
     return response
 
-# =========================
-# PLANTILLA QGIS
-# =========================
 
 @app.route('/exportar_template_qgis')
 def exportar_template_qgis():
+    """Exporta plantilla de ejemplo para QGIS"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    template_data = [
-        {
-            'ID_FICHA': '1',
-            'FECHA': '2024-01-15',
-            'PROVINCIA': 'Santo Domingo de los Tsáchilas',
-            'CANTON': 'Santo Domingo',
-            'PARROQUIA': 'Puerto Limón',
-            'TRAMO_VIAL': 'Vía Quevedo - Puerto Limón',
-            'COORD_X_ESTE': '697499',
-            'COORD_Y_NORTE': '9966673',
-            'OBSERVACIONES': 'Alcantarilla obstruida al 50%',
-            'M_ALA_LONGITUD_m': '5.50',
-            'M_ALA_ESPESOR_m': '0.30',
-            'M_ALA_MATERIAL': 'H.Simple',
-            'M_ALA_ESTADO': 'Regular',
-            'TUB_MATERIAL': 'M.Corrugado',
-            'TUB_LONGITUD_m': '11.00',
-            'TUB_DIAMETRO_m': '1.40',
-            'TUB_ESTADO': 'Regular',
-            'POZO_EXISTE': 'SI',
-            'POZO_ANCHO_m': '1.20',
-            'POZO_LARGO_m': '1.60',
-            'POZO_ESTADO': 'Bueno'
-        }
-    ]
-    
-    df = pd.DataFrame(template_data)
     output = StringIO()
+    writer = csv.writer(output, delimiter=',', quoting=csv.QUOTE_ALL)
     
-    output.write("# PLANTILLA PARA QGIS - INFRAVIAL\n")
-    output.write("# Separador: coma (,), Codificacion: UTF-8\n")
-    output.write("# CRS recomendado: EPSG:32717 (UTM zona 17S)\n")
-    output.write("\n")
+    writer.writerow(['NRO_FICHA', 'PROVINCIA', 'CANTON', 'PARROQUIA', 'TRAMO_VIAL', 'UTM_ESTE', 'UTM_NORTE', 'OBSERVACIONES'])
+    writer.writerow(['1', 'Santo Domingo de los Tsáchilas', 'Santo Domingo', 'Puerto Limón', 'Vía Quevedo - Puerto Limón', '697499', '9966673', 'Alcantarilla obstruida al 50%'])
+    writer.writerow(['2', 'Pichincha', 'Quito', 'Calderón', 'Vía Calacalí', '785234', '10023456', 'Alcantarilla en buen estado'])
     
-    df.to_csv(output, index=False, encoding='utf-8-sig', sep=',', quoting=csv.QUOTE_ALL)
+    csv_data = output.getvalue()
+    output.close()
     
-    response = make_response(output.getvalue())
+    response = make_response(csv_data)
     response.headers['Content-Type'] = 'text/csv; charset=utf-8-sig'
-    response.headers['Content-Disposition'] = 'attachment; filename=INFRAVIAL_PLANTILLA_QGIS.csv'
+    response.headers['Content-Disposition'] = 'attachment; filename=plantilla_qgis.csv'
     
     return response
 
