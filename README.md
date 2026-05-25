@@ -1,192 +1,153 @@
 # 🛣️ InfraVial - Sistema de Fichas Técnicas de Alcantarillas
 
-![Versión](https://img.shields.io/badge/versión-1.0-blue)
-![Python](https://img.shields.io/badge/Python-3.10+-green)
+![Versión](https://img.shields.io/badge/versión-2.0-blue)
+![Python](https://img.shields.io/badge/Python-3.11+-green)
 ![Flask](https://img.shields.io/badge/Flask-3.0.2-red)
+![Render](https://img.shields.io/badge/Deploy-Render-purple)
+![Supabase](https://img.shields.io/badge/Database-Supabase-orange)
 
 ---
 
 ## 📖 ¿QUÉ ES INFRAVIAL?
 
-**InfraVial** es un programa que ayuda a los ingenieros a guardar información sobre alcantarillas (tuberías grandes que van debajo de las carreteras).
+**InfraVial** es un sistema completo para la gestión de fichas técnicas de alcantarillas, diseñado especialmente para ingenieros civiles y de infraestructura vial. Permite:
 
-Imagina que tienes una libreta donde apuntas datos de muchas alcantarillas: dónde están, de qué material son, si están rotas o no, y hasta puedes guardar fotos. **InfraVial** es esa libreta pero en la computadora, mucho más ordenada y fácil de usar.
-
----
-
-## 👤 ¿QUIÉNES USAN ESTE PROGRAMA?
-
-- **Ingenieros de campo**: Van a las alcantarillas, toman fotos y apuntan datos.
-- **Administradores**: Pueden ver todo lo que hacen los ingenieros y crear nuevos usuarios.
-
----
-
-## 🖥️ ¿QUÉ NECESITO PARA USARLO?
-
-| Requisito | ¿Qué es? |
-|-----------|----------|
-| Una computadora con Windows, Mac o Linux | Cualquier computadora moderna |
-| Tener instalado Python | Es el motor que hace funcionar el programa |
-| Conexión a Internet | Solo la primera vez y para conectarse a la base de datos |
-| Un navegador web (Chrome, Edge, Firefox) | Para abrir el programa |
+- 📝 **Crear fichas técnicas** con todos los datos de campo
+- 🖼️ **Subir fotografías** de cada alcantarilla
+- 🔍 **Buscar y filtrar** registros
+- ✏️ **Editar y eliminar** fichas existentes
+- 📤 **Exportar datos** a CSV (compatible con Excel y QGIS)
+- 🗺️ **Generar archivos WKT** para importar directamente en QGIS
+- 👥 **Gestionar usuarios** con diferentes roles (Admin/Usuario)
+- 📊 **Auditoría completa** de todas las acciones
 
 ---
 
-## 📦 PASO 1: INSTALAR PYTHON (SI NO LO TIENES)
+## 🚀 ¿CÓMO USAR INFRAVIAL?
 
-### Para Windows:
-1. Ve a https://www.python.org/downloads/
-2. Haz clic en el botón amarillo **"Download Python"**
-3. Abre el archivo que se descargó
-4. **IMPORTANTE**: Marca la casilla que dice **"Add Python to PATH"** (abajo de todo)
-5. Haz clic en **"Install Now"**
-6. Espera a que termine
+### 🌐 **OPCIÓN 1: USO EN LA NUBE (RECOMENDADA)**
 
-### Para Mac:
-1. Abre la Terminal (búscala con lupa 🔍)
-2. Escribe: `brew install python` (si tienes Homebrew)
-3. O descarga desde python.org
+**¡No necesitas instalar nada!** Solo abre tu navegador y ve a:
+https://infravial-knex.onrender.com
 
-### Para Linux (Ubuntu):
-```bash
+text
+
+**Credenciales de acceso:**
+| Tipo | Usuario | Contraseña |
+|------|---------|-------------|
+| Administrador | `coil` | `coil123` |
+
+**Ventajas:**
+- ✅ No necesitas instalar nada
+- ✅ Funciona en cualquier computadora con internet
+- ✅ Todos los usuarios ven los mismos datos
+- ✅ Acceso desde cualquier lugar
+
+**⚠️ Nota:** Si la página tarda en cargar (30-60 segundos), es normal. La aplicación se "duerme" después de 15 minutos sin uso y necesita despertarse.
+
+---
+
+### 💻 **OPCIÓN 2: INSTALACIÓN LOCAL**
+
+Si prefieres ejecutar la aplicación en tu propia computadora (sin internet), sigue estos pasos:
+
+#### 📋 Requisitos previos
+
+| Requisito | Especificación |
+|-----------|----------------|
+| Sistema operativo | Windows 10/11, macOS, o Linux |
+| Python | Versión 3.11 o superior |
+| Espacio en disco | 500 MB |
+| Internet | Solo para la instalación inicial |
+
+#### 🔧 Paso 1: Instalar Python
+
+**Windows:**
+1. Ve a [python.org](https://www.python.org/downloads/)
+2. Descarga Python 3.11 o superior
+3. **IMPORTANTE:** Marca "Add Python to PATH"
+4. Haz clic en "Install Now"
+
+**Mac:**
+brew install python
+**Linux (Ubuntu/Debian):**
 sudo apt update
 sudo apt install python3 python3-pip
-📦 PASO 2: INSTALAR EL PROGRAMA
-1. Descomprimir el proyecto
-Si te dieron un archivo .zip, haz clic derecho y selecciona "Extraer aquí".
 
-2. Abrir la terminal (ventana negra de comandos)
-En Windows:
+📦 Paso 2: Clonar o descargar el proyecto
+git clone https://github.com/danirdz2524-ux/infravial.git
+cd infravial
+O descarga el ZIP desde GitHub.
 
-Presiona Windows + R
+🔧 Paso 3: Crear entorno virtual e instalar dependencias
+# Crear entorno virtual
+python -m venv venv
 
-Escribe cmd y presiona Enter
+# Activar entorno virtual
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
 
-Escribe: cd ruta/donde/esta/tu/proyecto (ejemplo: cd C:\Users\TuNombre\Escritorio\infravial)
+# Instalar dependencias
+pip install -r requirements.txt
+🚀 Paso 4: Configurar variables de entorno
+Crea un archivo .env en la raíz del proyecto con:
 
-En Mac:
-
-Abre la aplicación Terminal
-
-Escribe: cd ruta/donde/esta/tu/proyecto
-
-3. Instalar todo lo necesario (SOLO UNA VEZ)
-Copia y pega este comando en la terminal:
-
-bash
-pip install Flask python-dotenv supabase httpx Werkzeug pandas openpyxl
-¿Qué instalamos?
-
-Paquete	¿Para qué sirve?
-Flask	Crea el sitio web del programa
-supabase	Conecta con la base de datos en la nube
-pandas	Ayuda a exportar datos a Excel y CSV
-openpyxl	Permite crear archivos de Excel
-🚀 PASO 3: EJECUTAR EL PROGRAMA
-Cada vez que quieras usar el programa:
-Abre la terminal (ventana negra)
-
-Ve a la carpeta del proyecto:
-
-bash
-cd ruta/donde/esta/tu/proyecto
-Ejecuta el programa:
-
-bash
+env
+SECRET_KEY=tu_clave_secreta_aqui
+SUPABASE_URL=https://tusupabase.supabase.co
+SUPABASE_KEY=tu_api_key_de_supabase
+▶️ Paso 5: Ejecutar la aplicación
 python app.py
-Verás un mensaje como este:
+Abre tu navegador y ve a: http://127.0.0.1:5000
 
-text
-* Running on http://127.0.0.1:5000
-Abre tu navegador (Chrome, Edge, Firefox)
+📋 FUNCIONALIDADES COMPLETAS
+🏠 Dashboard (Pantalla principal)
+Para Administradores	Para Usuarios Normales
+Total de fichas registradas	Mis fichas registradas
+Total de usuarios del sistema	Acceso rápido a nueva ficha
+Última actividad de usuarios	
+📝 Nueva Ficha Técnica
+El formulario incluye todas las secciones necesarias:
 
-Escribe esta dirección:
+Sección	Campos
+Ubicación General	Parroquia, Cantón, Provincia, Fecha, Tramo vial
+Muros de Ala	Material, Longitud, Espesor, Estado (Bueno/Regular/Malo)
+Tubería	Material, Longitud, Diámetro, Estado
+Muro Cabezal	Longitud, Espesor, Estado
+Pozo de Recolección	Existencia, Ancho, Largo, Estado
+Coordenadas UTM	ESTE (X), NORTE (Y)
+Observaciones	Texto libre
+Fotografía	Subir imagen (arrastrar o seleccionar)
+💡 Tip: Presiona la tecla Enter para saltar rápidamente al siguiente campo.
 
-text
-http://127.0.0.1:5000
-¡El programa está listo! 🎉
+🔍 Ver Registros
+Función	Descripción
+Búsqueda	Buscar por número de ficha, provincia, cantón o tramo vial
+Paginación	10 registros por página
+Editar	✏️ Modificar cualquier ficha
+Eliminar	🗑️ Borrar ficha (con confirmación)
+Ver imagen	🖼️ Abrir la foto en nueva pestaña
+📤 Exportar Datos
+Opción	Formato	Uso
+CSV - Todas las fichas	CSV	Compatible con Excel y QGIS
+CSV - Mis fichas	CSV	Solo tus registros
+QGIS WKT	CSV con geometría	Importar directamente como puntos en QGIS
+Plantilla QGIS	CSV	Ejemplo de estructura
+👥 Gestión de Usuarios (Solo Admin)
+Función	Descripción
+Crear usuario	Nombre, contraseña y rol (Admin/Usuario)
+Eliminar usuario	Eliminar usuarios (no puedes eliminarte a ti mismo)
+Ver actividad	Bitácora completa de todas las acciones
+🗺️ CÓMO IMPORTAR DATOS A QGIS
+Exporta los datos desde InfraVial (opción CSV o QGIS WKT)
 
-🔑 PASO 4: INICIAR SESIÓN
-Al abrir el programa, verás una pantalla de login:
+Abre QGIS en tu computadora
 
-Si eres...	Usuario	Contraseña
-Administrador	admin	admin123
-Ingeniero normal	(te lo dará el administrador)	(te lo dará el administrador)
-📋 PASO 5: CÓMO USAR EL PROGRAMA
-🏠 PANTALLA PRINCIPAL (DASHBOARD)
-Muestra:
+Ve a: Capa → Añadir capa → Añadir capa de texto delimitado
 
-Cuántas fichas has guardado
-
-Accesos rápidos
-
-📝 CREAR UNA NUEVA FICHA
-Haz clic en "Nueva Ficha" en el menú de la izquierda
-
-Llena todos los campos:
-
-Ubicación: Parroquia, Cantón, Provincia, Fecha, Tramo vial
-
-Muros de ala: Material, longitud, espesor, estado (Bueno/Regular/Malo)
-
-Tubería: Material, longitud, diámetro, estado
-
-Muro cabezal: Longitud, espesor, estado
-
-Pozo de recolección: Si existe, ancho, largo, estado
-
-Coordenadas UTM: Este (X) y Norte (Y)
-
-Observaciones: Escribe cualquier detalle importante
-
-Fotografía: Arrastra una foto o haz clic en "Subir Foto"
-
-TIP: Presiona la tecla Enter para saltar al siguiente campo más rápido
-
-Haz clic en "GUARDAR FICHA" (botón azul)
-
-📋 VER REGISTROS
-Haz clic en "Ver Registros" en el menú
-
-Verás una tabla con todas las fichas guardadas
-
-Puedes:
-
-Buscar por provincia, cantón o número de ficha
-
-Editar ✏️: Modificar una ficha
-
-Eliminar 🗑️: Borrar una ficha (con confirmación)
-
-Ver imagen 🖼️: Si tiene foto, se abrirá en otra pestaña
-
-📤 EXPORTAR DATOS (Para QGIS o Excel)
-Ve a "Ver Registros"
-
-Haz clic en el botón VERDE "Exportar Datos"
-
-Elige:
-
-CSV - Todas las fichas: Guarda en formato CSV (para QGIS)
-
-CSV - Mis fichas: Solo las que tú creaste
-
-Excel - Todas las fichas: Guarda en Excel (más fácil de leer)
-
-Excel - Mis fichas: Solo las tuyas
-
-QGIS WKT: Para importar directamente como puntos en QGIS
-
-Plantilla QGIS: Un ejemplo para aprender
-
-El archivo se descargará automáticamente a tu carpeta de Descargas
-
-🗺️ CÓMO IMPORTAR A QGIS (Para hacer mapas)
-Abre QGIS
-
-Ve a Capa → Añadir capa → Añadir capa de texto delimitado
-
-Selecciona el archivo CSV que exportaste
+Selecciona el archivo CSV exportado
 
 Configura:
 
@@ -194,9 +155,9 @@ Separador: Coma ,
 
 Codificación: UTF-8
 
-Haz clic en Añadir
+Haz clic en "Añadir"
 
-Para crear puntos en el mapa:
+Para crear puntos en el mapa (opción CSV normal):
 
 Usa COORD_X_ESTE como coordenada X
 
@@ -204,76 +165,81 @@ Usa COORD_Y_NORTE como coordenada Y
 
 CRS: EPSG:32717 (UTM zona 17S para Ecuador)
 
-👥 ADMINISTRADOR: GESTIONAR USUARIOS
-SOLO el usuario admin puede hacer esto:
+Si usaste la opción QGIS WKT: La geometría ya viene incluida en la columna WKT.
 
-Ve a "Usuarios" en el menú
-
-Puedes:
-
-Crear usuario: Escribe nombre y contraseña, elige si es Admin o Usuario
-
-Eliminar usuario: Borrar un usuario (no puedes borrarte a ti mismo)
-
-Ve a "Actividad" para ver:
-
-Quién inició sesión y cuándo
-
-Quién creó, editó o eliminó fichas
-
-Quién exportó datos
-
-❓ BOTÓN DE AYUDA (MANUAL)
-En todas las pantallas, en la esquina inferior derecha hay un botón redondo azul con un signo ?. Haz clic allí para abrir este manual dentro del programa.
-
-🛑 CÓMO CERRAR EL PROGRAMA
-En la terminal (ventana negra), presiona Ctrl + C
-
-O haz clic en "Cerrar sesión" en el menú y luego cierra la ventana del navegador
-
-⚠️ SOLUCIÓN DE PROBLEMAS COMUNES
-Problema	¿Qué hago?
-No se abre el programa	Asegúrate de estar en la carpeta correcta con cd
-Error "pip no se reconoce"	No instalaste Python correctamente. Revisa el Paso 1
-Error "No module named 'flask'"	Ejecuta pip install Flask
-Error de conexión a Supabase	Revisa que tengas internet
-La imagen no se guarda	La carpeta uploads se crea sola, revisa permisos
-El botón Exportar no hace nada	Asegúrate de tener instalado pandas y openpyxl
-Los números de ficha no son 1,2,3...	Es normal, los números no se reutilizan aunque borres
-
-
-📁 ESTRUCTURA DEL PROYECTO (PARA CURIOSOS)
-proyecto/
+📁 ESTRUCTURA DEL PROYECTO
+text
+infravial/
 │
-├── app.py                 ← El corazón del programa
-├── config.py              ← Configuración (no tocar)
-├── requirements.txt       ← Lista de cosas que necesita
-├── .env                   ← Secretos (no compartir)
+├── app.py                 ← Aplicación principal (Flask)
+├── config.py              ← Configuración de Supabase
+├── requirements.txt       ← Dependencias del proyecto
+├── runtime.txt            ← Versión de Python (para Render)
+├── README.md              ← Este archivo
+├── MANUAL_DE_USUARIO - LOCAL.pdf  ← Manual completo para usuarios
+├── MANUAL_DE_USUARIO - GLOBAL.pdf  ← Manual completo para usuarios
+│
+├── SCRIPTS_BD/
+│   └── database.sql       ← Script para crear la base de datos
 │
 ├── static/
-│   ├── css/styles.css     ← Los colores y diseños
-│   ├── js/app.js          ↑ Funciones especiales
-│   └── uploads/           ← Aquí se guardan las fotos
+│   ├── css/
+│   │   └── styles.css     ← Estilos de la aplicación
+│   ├── js/
+│   │   └── app.js         ← JavaScript (drag & drop, etc.)
+│   └── uploads/           ← Carpeta donde se guardan las imágenes
 │
 └── templates/
-    ├── login.html         ← Pantalla de entrada
-    ├── dashboard_admin.html ← Pantalla del jefe
-    ├── dashboard_user.html ← Pantalla del ingeniero
-    ├── formulario.html    ← Formulario para crear fichas
-    ├── editar_ficha.html  ← Formulario para modificar
-    ├── registros.html     ← Lista de todas las fichas
-    ├── admin_usuarios.html ← Gestionar usuarios
-    └── admin_actividad.html ← Ver actividad
-
+    ├── login.html              ← Pantalla de inicio de sesión
+    ├── dashboard_admin.html    ← Panel de administrador
+    ├── dashboard_user.html     ← Panel de usuario normal
+    ├── formulario.html         ← Formulario para crear/editar fichas
+    ├── registros.html          ← Lista de registros con paginación
+    ├── admin_usuarios.html     ← Gestión de usuarios (solo admin)
+    └── admin_actividad.html    ← Bitácora de actividad (solo admin)
     
-📞 ¿NECESITAS AYUDA?
-Si algo no funciona, revisa:
+🛠️ TECNOLOGÍAS UTILIZADAS
+Tecnología	¿Para qué sirve?
+Python 3.11	Lenguaje principal del backend
+Flask	Framework web para crear la aplicación
+Supabase	Base de datos en la nube (PostgreSQL)
+Render	Plataforma de despliegue (hosting gratuito)
+Bootstrap 5	Estilos y diseño responsive
+HTML/CSS/JS	Interfaz de usuario
 
-¿Tienes internet? (el programa necesita conexión a Supabase)
+⚠️ SOLUCIÓN DE PROBLEMAS COMUNES
+Problema	Solución
+La página no carga en Render	Espera 1 minuto y recarga. Es el "cold start".
+Error "Internal Server Error"	Revisa que las variables de entorno estén configuradas.
+No puedo iniciar sesión	Usa admin / admin123 o contacta al administrador.
+La exportación no descarga nada	Asegúrate de tener registros en la tabla.
+Las imágenes no se ven	Revisa que la carpeta static/uploads/ exista y tenga permisos.
+"No module named 'flask'"	Ejecuta pip install -r requirements.txt
 
-¿Ejecutaste pip install? (solo la primera vez)
+📞 DESPLIEGUE EN LA NUBE (PARA ADMINISTRADORES)
+La aplicación está desplegada en Render (plan gratuito):
 
-¿Estás en la carpeta correcta? (usa dir en Windows o ls en Mac/Linux para ver los archivos)
+URL: https://infravial-knex.onrender.com
+
+Características del plan gratuito:
+
+750 horas de actividad al mes (suficiente para 24/7)
+
+La app se "duerme" después de 15 minutos sin uso
+
+Al despertar tarda ~30-60 segundos
+
+Para mantener la app siempre despierta: Usa UptimeRobot (gratis) configurando un monitor que haga ping cada 5 minutos.
+
+👥 CRÉDITOS
+Desarrollador: CRUZ RODRIGUEZ DAVID DANIEL - GARCIA ROSALES ALEJANDRO - GRACIA VENTURA ANGEL
+
+Plataforma: Render + Supabase + Flask
+
+Año: 2025
+
+📄 LICENCIA
+Proyecto educativo - Uso académico.
 
 🎉 ¡FELICITACIONES!
-Ahora sabes usar InfraVial. Guarda información de alcantarillas, exporta a Excel o QGIS, y ayuda a mantener las carreteras en buen estado. 🛣️
+Ahora sabes usar InfraVial. Guarda información de alcantarillas, exporta a QGIS o Excel, y ayuda a mantener las carreteras en buen estado. 🛣️
